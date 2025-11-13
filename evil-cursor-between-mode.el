@@ -1,16 +1,22 @@
-;; -*- lexical-binding: t; -*-
-;; #+title: evil-cursor-between-mode.el
+;;; evil-cursor-between-mode.el --- Emacs' cursor model in `evil-mode' -*- lexical-binding: t; -*-
 
 ;; ============================================================================
 ;; Creative Commons Attribution-ShareAlike 4.0 International License
 ;; [[https://creativecommons.org/licenses/by-sa/4.0/]]
 ;; ============================================================================
 ;; A special thanks to Toby Cubitt who coded the cursor model.
-;; Peter Friis Jensen made it a mode with three swapped keybindings.
+;; Peter Friis Jensen made it a mode and swapped three keybindings.
+
+;; Author: Peter Friis Jensen <maxfriis@gmail.com>
+;; Maintainer: Peter Friis Jensen <maxfriis@gmail.com>
+;; URL: https://github.com/maxfriis/evil-cursor-between-mode
+;; Version: 0.1.0
+;; Package-Requires: ((emacs "24.1") (evil "20250929.1650"))
+;; Keywords: cursor, point
 
 ;; ============================================================================
-;; I use Emacs' cursor between characters model for cursor positioning in
-;; `evil-mode' instead of Vim `normal-state's cursor on characters model.
+;; Emacs' cursor between characters model for cursor positioning in
+;; `evil-mode' instead of Vim's normal-state cursor on characters model.
 ;; ============================================================================
 (unless (package-installed-p 'evil)
   (require 'evil))
@@ -218,7 +224,7 @@ If the end position is at the beginning of a line, then:
   (unless (zerop (length offset))
     (save-match-data
       (string-match
-       "^\\([esb]\\)?\\(\\([-+]\\)?\\([0-9]*\\)\\)$"
+       "^\\([esb]\\)?\\(\\([+-]\\)?\\([0-9]*\\)\\)$"
        offset)
       (when (and (= (aref offset (match-beginning 1)) ?e)
                  (not (bobp)))
@@ -249,4 +255,4 @@ or somewhere after the cursor and jump to the corresponding one."
 ;; (evil-cursor-between-mode 1) ; For now, so enabled when I load this file.
 
 (provide 'evil-cursor-between-mode)
-;; End of evil-cursor-between-mode.el
+;;; evil-cursor-between-mode.el ends here

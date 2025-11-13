@@ -1,0 +1,2 @@
+;;; Generated package description from evil-cursor-between-mode.el  -*- no-byte-compile: t -*-
+(define-package "evil-cursor-between-mode" "0.1.0" "Emacs' cursor model in `evil-mode'" '((emacs "24.1") (evil "20250929.1650")) :authors '(("Peter Friis Jensen" . "maxfriis@gmail.com")) :maintainer '("Peter Friis Jensen" . "maxfriis@gmail.com") :keywords '("cursor" "point") :url "https://github.com/maxfriis/evil-cursor-between-mode")
