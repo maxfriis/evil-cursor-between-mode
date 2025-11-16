@@ -12,7 +12,6 @@
 ;;; Generated autoloads from evil-cursor-between-mode.el
 
 (register-definition-prefixes "evil-cursor-between-mode" '("ad-evil-ex-search-adjust-offset" "evil-"))
-
 
 ;;; End of scraped data
 

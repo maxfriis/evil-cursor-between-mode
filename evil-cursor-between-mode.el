@@ -1,4 +1,4 @@
-;;; evil-cursor-between-mode.el --- Emacs' cursor model in `evil-mode' -*- lexical-binding: t; -*-
+;;; evil-cursor-between-mode.el --- Emacs' cursor model in evil-mode -*- lexical-binding: t; -*-
 
 ;; ============================================================================
 ;; Creative Commons Attribution-ShareAlike 4.0 International License
@@ -7,7 +7,7 @@
 ;; A special thanks to Toby Cubitt who coded the cursor model.
 ;; Peter Friis Jensen made it a mode and swapped three keybindings.
 
-;; Author: Peter Friis Jensen <maxfriis@gmail.com>
+;; Author: Toby Cubitt
 ;; Maintainer: Peter Friis Jensen <maxfriis@gmail.com>
 ;; URL: https://github.com/maxfriis/evil-cursor-between-mode
 ;; Version: 0.1.0
@@ -18,14 +18,13 @@
 ;; Emacs' cursor between characters model for cursor positioning in
 ;; `evil-mode' instead of Vim's normal-state cursor on characters model.
 ;; ============================================================================
-(unless (package-installed-p 'evil)
-  (require 'evil))
+(require 'evil)
 
-(defvar evil-move-cursor-back-default evil-move-cursor-back
+(defvar evil-move-cursor-back-init evil-move-cursor-back
   "For toggling the variable with `evil-cursor-between-mode'")
-(defvar evil-move-beyond-eol-default evil-move-beyond-eol
+(defvar evil-move-beyond-eol-init evil-move-beyond-eol
   "For toggling the variable with `evil-cursor-between-mode'")
-(defvar evil-highlight-closing-paren-at-point-states-default evil-highlight-closing-paren-at-point-states
+(defvar evil-highlight-closing-paren-at-point-states-init evil-highlight-closing-paren-at-point-states
   "For toggling the variable with `evil-cursor-between-mode'")
 
 ;; ============================================================================
@@ -34,7 +33,7 @@
 (define-minor-mode evil-cursor-between-mode
   "Mode for using Emacs' cursor model in `evil-mode's normal state.
 \nThe mode swap \"a\"/\"A\", \"o\"/\"O\" and \"p\"/\"P\" compared to Vim's normal state keys.
-The idea is to avoid the <shift> layer when dealing with the current line atom.
+The idea is to avoid the <shift> layer when dealing with the current line.
 Layers can then be replaced with a motion with equivalent efficiency.
 \nTry to embrace the mindset of Emacs' cursor model and motions among line atoms.
 Maybe fewer layers are better for your Emacs pinky?"
@@ -84,9 +83,9 @@ Maybe fewer layers are better for your Emacs pinky?"
     ;; Back to `evil-mode' defaults when `evil-cursor-between-mode' is disabled
     ;; ============================================================================
     (setq
-     evil-move-cursor-back evil-move-cursor-back-default
-     evil-move-beyond-eol evil-move-beyond-eol-default
-     evil-highlight-closing-paren-at-point-states evil-highlight-closing-paren-at-point-states-default)
+     evil-move-cursor-back evil-move-cursor-back-init
+     evil-move-beyond-eol evil-move-beyond-eol-init
+     evil-highlight-closing-paren-at-point-states evil-highlight-closing-paren-at-point-states-init)
     ;; ----------------------------------------------------------------------------
     ;; Motion commands.
     (evil-define-key 'motion global-map
@@ -251,8 +250,6 @@ or somewhere after the cursor and jump to the corresponding one."
       (goto-char pos)
       (evil-jump-item count)
       (when (> (point) pos) (forward-char)))))
-
-;; (evil-cursor-between-mode 1) ; For now, so enabled when I load this file.
 
 (provide 'evil-cursor-between-mode)
 ;;; evil-cursor-between-mode.el ends here
