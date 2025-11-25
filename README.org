@@ -6,10 +6,10 @@ This is a mode for using Emacs' cursor between characters model in evil-mode's n
 
 ** License
 
-This software is licensed under:
-
 Creative Commons Attribution-ShareAlike 4.0 International License\\
 [[https://creativecommons.org/licenses/by-sa/4.0/]]
+
+Supposedly this is convertible to GPL 3.
 
 *** Thanks
 
@@ -18,24 +18,19 @@ Toby Cubitt coded the cursor model.\\
 
 ** Install
 
-Somehow make evil-cursor-between-mode available to Emacs.
-Maybe just download the file to ~/.emacs.d/ and:
+Download the file to ~/.emacs.d/ or install it with e.g. (package-install-from-buffer).
+Add the following code to your init.el:
 #+begin_src emacs-lisp
-  (load (locate-user-emacs-file "evil-cursor-between-mode") nil t)
-  (evil-cursor-between-mode 1)
-#+end_src
-
-*** Repository
-
-Find and install it with e.g. (list-packages) or (package-install-from-buffer) and add the following code to your init.el:
-#+begin_src emacs-lisp
-  (require 'evil-cursor-between-mode)
+  (if (package-installed-p 'evil-cursor-between-mode)
+      (require 'evil-cursor-between-mode)
+    ;; else
+    (load (locate-user-emacs-file "evil-cursor-between-mode") nil t))
   (evil-cursor-between-mode 1)
 #+end_src
 
 ** Cursor models
 
-Vim works with two different cursor models.
+Vim works with two cursor models.
 A cursor /on/ characters model in normal-state and /between/ characters in insert-state.
 The evil-cursor-between-mode unify these to a cursor between model in both states.
 
@@ -61,7 +56,7 @@ That binding makes sense in a cursor between model, whereas the new =A= does not
 
 *** The =p= and =o= bindings
 
-With the change to =a= it is natural to have a look at =p= too.
+With the change to =a= it is natural to look at =p= too.
 When you are not pasting a full line Vim's =p= makes little sense in this model.
 Move forward and paste is strange to prioritize with a one letter lower case binding.
 
@@ -100,21 +95,21 @@ Once all the commands operating on other lines are layered you might start to ad
 The idea is to work with motions among line nuggets.
 
 Vim already does this somewhat since most commands are limited to operating on the current line.
-I like almost all my keybindings dealing with the current line to be lower case.
+I like all my keybindings dealing with the current line to be lower case.
 Note that =I= has not been changed but =0i= will do this with a motion.
 
 With this cursor model you can embrace the line nugget idea and replace layers with motions.
 If you want to open the next line you can use =jo= or =a<RET>= which is both two key presses, but so is =<shift>o=.
-Same works for paste where =jp= can replace the new =P=, when you paste a line to the next line.
+Same works for paste where =jp= can replace the new =P=, when you paste a line.
 
 The mindset is that you are working on the current line.
-This work is made more efficient when the keybindings are lower case.
-I feel this logic is easier to comprehend and internalize especially if you are not a power user.
+This work is more efficient when the keybindings are lower case.
+I feel this logic is easier to comprehend and internalize if you are not a power user.
 
 *** Efficiency
 
 Compared to Vim the efficiency is roughly the same with this mode's cursor model.
-If you need to work with the next line you need to press more keys.
+If you need to work with the next line you will need weakly more keys.
 When dealing with the current line nugget you might need fewer.
 In most situations you will probably solve whatever you want to do, with roughly the same number of keys.
 You might develop muscle memory, which make you end up in the right place for using fewer key strokes.
@@ -130,7 +125,7 @@ The main drawback is that it will be a bit harder to work efficiently with an un
 The former mentioned muscle memory will work against you.
 
 This is often mentioned as an advantage of Vim over Emacs.
-Emacs' default keybindings are so crazy that everyone edit them.
+Emacs' default keybindings are so crazy that everyone personalize them.
 You are likely to have Vim's default keybindings available, if you sit down with someone else's Vim box.
 
 *** Combined command and motion
@@ -138,12 +133,12 @@ You are likely to have Vim's default keybindings available, if you sit down with
 The mode does have things that become harder or less natural.
 In Vim you can artificially mimic =l= with =i<esc>=.
 This type of behavior is lost or at least feel unnatural with this mode's cursor model.
-That is a real cost, since combining a command and motion can sometimes be utilized with a prefix.
+That is a real cost, since a combined command and motion can sometimes be utilized with a prefix.
 
 *** Swap characters
 
 A more useful application of the command/motion behavior is Vim's =xp= which /swap/ two characters and move the cursor forward.
-(transpose-chars) does roughly the same thing including the motion but doesn't involve the kill ring.
+(transpose-chars) does roughly the same thing including the motion without involving the kill ring.
 I bind it to =gs= in my init.el, but this is not a part of the mode.
 #+begin_src emacs-lisp
   (bind-keys
@@ -153,7 +148,7 @@ I bind it to =gs= in my init.el, but this is not a part of the mode.
 Vim's default =gs= is (sit-for 1) but evil doesn't implement it.
 
 Note that evil-mode's normal behavior is often available so e.g. =~= will work on the (char-after) and move forward.
-It might feel a bit less natural with this mode's cursor model but it still works.
+It might feel a bit less natural with this mode's cursor model, but it still works.
 
 *** Touching delimiters
 
@@ -180,7 +175,7 @@ It is hard to start out with Vim in it's unfamiliar cursor model.
 Maybe this mode will make it an easier and better experience to pick up the modal framework.
 
 The mode might be helpful if you suffer from a hand injury.
-Emacs pinky is a real thing and layers can be a serious problem.
+Emacs pinky is a real thing and layers can be a problem.
 Even a small relief in the amount of layers might be important.
 
 Last the mode might be helpful to people who use accessibility help.
