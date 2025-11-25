@@ -29,11 +29,11 @@
 (require 'evil)
 
 (defvar evil-cursor-between-move-cursor-back-init evil-move-cursor-back
-  "For toggling the variable with `evil-cursor-between-mode'")
+  "For toggling the variable with `evil-cursor-between-mode'.")
 (defvar evil-cursor-between-move-beyond-eol-init evil-move-beyond-eol
-  "For toggling the variable with `evil-cursor-between-mode'")
+  "For toggling the variable with `evil-cursor-between-mode'.")
 (defvar evil-cursor-between-highlight-closing-paren-at-point-states-init evil-highlight-closing-paren-at-point-states
-  "For toggling the variable with `evil-cursor-between-mode'")
+  "For toggling the variable with `evil-cursor-between-mode'.")
 
 ;; ============================================================================
 ;;; The minor mode
@@ -43,9 +43,9 @@
 \nThe mode swap \"a\"/\"A\", \"o\"/\"O\" and \"p\"/\"P\" compared to Vim's normal state keys.
 The idea is to avoid the <shift> layer when dealing with the current line.
 Layers can then be replaced with a motion with equivalent efficiency.
-\nTry to embrace the mindset of Emacs' cursor model and motions among line atoms.
+\nEmbrace the mindset of Emacs' cursor model and motions among line nuggets.
 Maybe fewer layers are better for your Emacs pinky?"
-  ;; :global t
+  :global t ; Without this the mode will not sync up with it's variable.
   :group 'evil
   :lighter nil
   (cond
@@ -53,13 +53,13 @@ Maybe fewer layers are better for your Emacs pinky?"
     (unless evil-mode
       (evil-mode 1))
     ;; ----------------------------------------------------------------------------
-    ;; Cursor related `evil-mode' settings
+    ;; Cursor related `evil-mode' settings.
     (setq
      evil-move-cursor-back nil
      evil-move-beyond-eol t
      evil-highlight-closing-paren-at-point-states nil)
     ;; ----------------------------------------------------------------------------
-    ;; Command rebindings
+    ;; Command rebindings.
     ;; Motion commands "w"/"W", "b"/"B", "F" and "T" works out of the evil box.
     (evil-define-key 'motion global-map
       "t"  #'evil-find-char
@@ -68,9 +68,9 @@ Maybe fewer layers are better for your Emacs pinky?"
       "E"  #'evil-cursor-between-forward-after-WORD-end
       "ge" #'evil-cursor-between-backward-after-word-end
       "gE" #'evil-cursor-between-backward-after-WORD-end
-      "%"  #'evil-cursor-between-jump-before-item)
+      "%"  #'evil-cursor-between-jump-after-item)
     ;; ----------------------------------------------------------------------------
-    ;; Swap "a", "o" and "p" with their capital bindings
+    ;; Swap "a", "o" and "p" with their capital bindings.
     (evil-define-key 'normal global-map
       "a"  #'evil-append-line  ; Swapped so append is used to edit from eol.
       "A"  #'evil-append       ; Useless in this mode. "li" makes more sense.
@@ -85,13 +85,13 @@ Maybe fewer layers are better for your Emacs pinky?"
       "O"  #'evil-org-open-below))
    (t ; else
     ;; ----------------------------------------------------------------------------
-    ;; Back to `evil-mode' defaults when `evil-cursor-between-mode' is disabled
+    ;; Back to `evil-mode' defaults when `evil-cursor-between-mode' is disabled.
     (setq
      evil-move-cursor-back evil-cursor-between-move-cursor-back-init
      evil-move-beyond-eol evil-cursor-between-move-beyond-eol-init
      evil-highlight-closing-paren-at-point-states evil-cursor-between-highlight-closing-paren-at-point-states-init)
     ;; ----------------------------------------------------------------------------
-    ;; Motion commands
+    ;; Motion commands.
     (evil-define-key 'motion global-map
       "t"  #'evil-find-char-to
       "f"  #'evil-find-char
@@ -101,7 +101,7 @@ Maybe fewer layers are better for your Emacs pinky?"
       "gE" #'evil-backward-WORD-end
       "%"  #'evil-jump-item)
     ;; ----------------------------------------------------------------------------
-    ;; Swap "a", "o" and "p" back to their evil defaults
+    ;; Swap "a", "o" and "p" back to their evil defaults.
     (evil-define-key 'normal global-map
       "a"  #'evil-append
       "A"  #'evil-append-line
@@ -156,12 +156,12 @@ The motion is repeated COUNT times."
 
 (defun evil-cursor-between-backward-after-end (thing &optional count)
   "Move backward to end of THING.
-The motion is repeated COUNT times. This is the same as calling
+The motion is repeated COUNT times.  This is the same as calling
 `evil-cursor-between-forward-after-word-end' with -COUNT."
   (evil-cursor-between-forward-after-end thing (- (or count 1))))
 
 (evil-define-motion evil-cursor-between-forward-after-word-end (count &optional bigword)
-  "Move the cursor to the end of the COUNT-th next word.
+  "Move the cursor to the end of the COUNT'th next word.
 If BIGWORD is non-nil, move by WORDS."
   :type inclusive
   (let ((thing (if bigword 'evil-WORD 'evil-word))
@@ -170,12 +170,12 @@ If BIGWORD is non-nil, move by WORDS."
     (evil-cursor-between-forward-after-end thing count)))
 
 (evil-define-motion evil-cursor-between-forward-after-WORD-end (count)
-  "Move the cursor to the end of the COUNT-th next WORD."
+  "Move the cursor to the end of the COUNT'th next WORD."
   :type inclusive
   (evil-cursor-between-forward-after-word-end count t))
 
 (evil-define-motion evil-cursor-between-backward-after-word-end (count &optional bigword)
-  "Move the cursor to the end of the COUNT-th previous word.
+  "Move the cursor to the end of the COUNT'th previous word.
 If BIGWORD is non-nil, move by WORDS."
   :type inclusive
   (let ((thing (if bigword 'evil-WORD 'evil-word)))
@@ -183,12 +183,12 @@ If BIGWORD is non-nil, move by WORDS."
     (evil-cursor-between-backward-after-end thing count)))
 
 (evil-define-motion evil-cursor-between-backward-after-WORD-end (count)
-  "Move the cursor to the end of the COUNT-th previous WORD."
+  "Move the cursor to the end of the COUNT'th previous WORD."
   :type inclusive
   (evil-cursor-between-backward-after-word-end count t))
 
 ;; ----------------------------------------------------------------------------
-;;;; Redefine inclusive motion type to not include character after point
+;;;; Redefine inclusive motion type to not include character after point.
 (evil-define-type inclusive
   "Return the positions unchanged, with some exceptions.
 If the end position is at the beginning of a line, then:
@@ -206,7 +206,7 @@ If the end position is at the beginning of a line, then:
                  (cond
                   ((progn
                      (goto-char beg)
-                     (looking-back "^[ \f\t\v]*" (line-beginning-position)))
+                     (looking-back "^[\f\s\t\v]*" (line-beginning-position)))
                    (evil-expand beg end 'line))
                   (t
                    (unless evil-cross-lines
@@ -220,8 +220,9 @@ If the end position is at the beginning of a line, then:
                       (if (= width 1) "" "s")))))
 
 ;; ----------------------------------------------------------------------------
-;;;; Make "e" search offset put point after last character
+;;;; Make "e" search offset put point after last character.
 (defun evil-cursor-between-ad-evil-ex-search-adjust-offset (offset)
+  "Make `evil-mode's \"e\" search OFFSET put point after last character."
   (unless (zerop (length offset))
     (save-match-data
       (string-match
@@ -236,8 +237,8 @@ If the end position is at the beginning of a line, then:
  :after #'evil-cursor-between-ad-evil-ex-search-adjust-offset)
 
 ;; ----------------------------------------------------------------------------
-;;;; `evil-jump-item' move point after matching delimeter if it jumps forward
-(evil-define-motion evil-cursor-between-jump-before-item (count)
+;;;; `evil-jump-item' move point after matching delimeter if it jumps forward.
+(evil-define-motion evil-cursor-between-jump-after-item (count)
   "Find the next item in this line immediately before
 or somewhere after the cursor and jump to the corresponding one."
   :jump t
