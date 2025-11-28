@@ -1,6 +1,6 @@
 #+title: Evil cursor between mode
 #+startup: showall hideblocks
-#+options: toc:nil
+#+options: toc:nil num:1
 
 This is a mode for using Emacs' cursor between characters model in evil-mode's normal-state.
 
@@ -9,22 +9,20 @@ This is a mode for using Emacs' cursor between characters model in evil-mode's n
 Creative Commons Attribution-ShareAlike 4.0 International License\\
 [[https://creativecommons.org/licenses/by-sa/4.0/]]
 
-Supposedly this is convertible to GPL 3.
+Supposedly this is convertible to GPL 3 but I'm not sure.
+Pull request?
 
 *** Thanks
 
 Toby Cubitt coded the cursor model.\\
 [[https://www.dr-qubit.org/Evil_cursor_model.html]]
 
-** Install
+*** Install
 
-Download the file to ~/.emacs.d/ or install it with e.g. (package-install-from-buffer).
+Download evil-cursor-between-mode.el, open and install it with (package-install-from-buffer).
 Add the following code to your init.el:
 #+begin_src emacs-lisp
-  (if (package-installed-p 'evil-cursor-between-mode)
-      (require 'evil-cursor-between-mode)
-    ;; else
-    (load (locate-user-emacs-file "evil-cursor-between-mode") nil t))
+  (require 'evil-cursor-between-mode)
   (evil-cursor-between-mode 1)
 #+end_src
 
@@ -41,35 +39,34 @@ Evil-mode's modal interface is preserved.
 ** Keybindings
 
 Even though or maybe because I come from the Emacs world, I don't like layers.
-=<shift>= just like =<ctrl>= is a layer and I try to minimize the use of it in keybindings.
-To do this the mode will change three keybindings compared to Vim's normal-state keys.
+=<shift>= just like =<ctrl>= is a layer and I try to minimize the use of them in keybindings.
+To do this the mode will change three keybindings in Vim's normal-state keys.
 
 *** The =a= binding
 
-First and foremost Vim's =a= in normal-state makes little sense with this cursor model.
-You should rarely need or use (evil-append).
+First and foremost Vim's =a= in normal-state makes little sense.
+With this mode (evil-append) is just move forward (=l=) and enter insert-state (=i=).
+That is how you think if you adopt the mode's cursor model.
 
 Therefore I swap evil-mode's =a= and =A=.
 
-It is useful to access insert-state at the end of the line with =a=.
+It is useful to access insert-state at the end of the line with the new =a=.
 That binding makes sense in a cursor between model, whereas the new =A= does not.
 
 *** The =p= and =o= bindings
 
-With the change to =a= it is natural to look at =p= too.
-When you are not pasting a full line Vim's =p= makes little sense in this model.
+With the change to =a= it is natural to have a look at =p= too.
+When you are not pasting a full line Vim's =p= makes little sense in this mode.
 Move forward and paste is strange to prioritize with a one letter lower case binding.
 
 Therefore I swap evil-mode's =p= and =P=.
 
-When you use this mode, you might find yourself only using one paste command.
+When you use the mode, you might find yourself only using one paste command.
 Vim's need for two paste commands is compensation for the normal-state cursor model.
 Other editors usually only have one paste command and it's also natural to mainly have one in this mode.
 The new =P= is still bound and can be useful, but you can contextually replace it with =jp= or =lp=.
 
-It is natural to also swap evil-mode's =o= and =O= so they work the same way as when you paste lines.
-This is also consistent with other lower case keybindings operating on the current line number like =cc=.
-There is no change next line command.
+Last I swap Vim's =o= and =O= so their case are consistent with =p= and =P= when you paste lines.
 
 *** Summary
 
@@ -85,21 +82,21 @@ This is all normal-state bindings:
 | =P=                 | =p=           | =jp= or =lp=      | (evil-paste-after)  |
 
 Besides that the mode manipulate motions so the cursor between characters model will work.
-E.g. =E= should bring you to the end of a word rather than between the last two characters.
+E.g. =E= should bring you to the end of a word rather than between the last two characters of a word.
 These manipulations all work seamlessly and should feel natural.
 
 ** The idea of a line nugget
 
-The overall idea is to reduce the use of layers and bindings.
-Once all the commands operating on other lines are layered you might start to adopt a new philosophy.
+One idea of the mode is to reduce the use of layers and bindings.
+When all the commands operating on other lines are layered, you might start to adopt a new philosophy.
 The idea is to work with motions among line nuggets.
 
-Vim already does this somewhat since most commands are limited to operating on the current line.
+Vim already does this somewhat, since most commands are limited to operating on the current line.
 I like all my keybindings dealing with the current line to be lower case.
-Note that =I= has not been changed but =0i= will do this with a motion.
+Remaining upper case bindings can be replaced by using a motion (e.g. =I= is =0i=).
 
-With this cursor model you can embrace the line nugget idea and replace layers with motions.
-If you want to open the next line you can use =jo= or =a<RET>= which is both two key presses, but so is =<shift>o=.
+With this mode you can embrace the line nugget idea and replace layers with motions.
+If you want to open the next line you can use =jo= or =a<RET>= which are both two key presses, but so are the new =<shift>o=.
 Same works for paste where =jp= can replace the new =P=, when you paste a line.
 
 The mindset is that you are working on the current line.
@@ -108,66 +105,68 @@ I feel this logic is easier to comprehend and internalize if you are not a power
 
 *** Efficiency
 
-Compared to Vim the efficiency is roughly the same with this mode's cursor model.
+Compared to Vim the efficiency is roughly the same with this mode.
 If you need to work with the next line you will need weakly more keys.
 When dealing with the current line nugget you might need fewer.
-In most situations you will probably solve whatever you want to do, with roughly the same number of keys.
-You might develop muscle memory, which make you end up in the right place for using fewer key strokes.
 
-Using a layer increase complexity because it adds a restriction on holding down a key while pressing other keys.
+In most situations you will probably solve whatever you want to do, with roughly the same number of keys.
+Over time you will develop muscle memory, which make you end up in the right place for using fewer key strokes.
+
+Using a layer increase complexity because it does not only require that you use two keys.
+It also adds a restriction on holding down a key while pressing other keys.
 The following is not fair, but I find it harder to write "hEll" than "hello".
 
 Ultimately the modal framework is about editing text (working with the current line nugget) rather than adding new text (working with additional lines).
 
 ** Drawbacks
 
-The main drawback is that it will be a bit harder to work efficiently with an unconfigured Vi, Vim or evil-mode editor.
+The main drawback is that it will be harder to work efficiently with an unconfigured Vi, Vim or evil-mode editor.
 The former mentioned muscle memory will work against you.
 
 This is often mentioned as an advantage of Vim over Emacs.
 Emacs' default keybindings are so crazy that everyone personalize them.
-You are likely to have Vim's default keybindings available, if you sit down with someone else's Vim box.
+You are more likely to have Vim's default keybindings available, if you sit down with someone else's Vim box.
 
 *** Combined command and motion
 
-The mode does have things that become harder or less natural.
+The mode does have things that become less natural or harder.
 In Vim you can artificially mimic =l= with =i<esc>=.
-This type of behavior is lost or at least feel unnatural with this mode's cursor model.
+This type of behavior where you have an implicit motion might feel unnatural in this mode.
 That is a real cost, since a combined command and motion can sometimes be utilized with a prefix.
 
 *** Swap characters
 
 A more useful application of the command/motion behavior is Vim's =xp= which /swap/ two characters and move the cursor forward.
-(transpose-chars) does roughly the same thing including the motion without involving the kill ring.
+The lisp function (transpose-chars) does roughly the same thing without involving the kill ring.
 I bind it to =gs= in my init.el, but this is not a part of the mode.
 #+begin_src emacs-lisp
   (bind-keys
    :map evil-normal-state-map
    ("gs" . transpose-chars))
 #+end_src
-Vim's default =gs= is (sit-for 1) but evil doesn't implement it.
+Vim's default =gs= is (sit-for 1) but evil-mode doesn't implement it.
 
-Note that evil-mode's normal behavior is often available so e.g. =~= will work on the (char-after) and move forward.
-It might feel a bit less natural with this mode's cursor model, but it still works.
+Note that Vim's behavior is often available so e.g. =~= will work on the (char-after) and move forward.
+It might feel a bit less natural in this mode but it still works.
 
 *** Touching delimiters
 
 If you have touching delimiters like "(...)(...)" and your cursor is between them, then =%= will jump back to the first "(".
-With this cursor model there is no way to toggle back and forth between the second set of delimiters when the two sets are touching.
+In this mode there is no way to toggle back and forth between the second set of delimiters when the two sets are touching.
 
 *** Visual block
 
 Last the mode does nothing to =C-v= which is still working with a cursor on character model.
 In practice =C-v= is still usable and useful but it will have a few bugs tied to the end of line position.
 
-Note that the evil team has done a great job on coloring the region in (evil-visual-block).
+Note that the evil team has done a great job on (evil-visual-block).
 Vanilla Emacs' (rectangle-mark-mode) =C-x <spc>= does not color the region the same way.
 Updating =C-v= to be consistent with this mode's cursor model is a challenge.
 
 ** Raison d'être speculation
 
 I think the main advantage of the mode is the line nugget mindset.
-If you don't use your editor every day I think this is easier to pick up.
+If you don't use your editor every day I think this is easier to pick up and more similar to other editing experiences.
 That is the personal preference I have.
 
 The reason for the mode might also be as an introduction to Vim.
@@ -180,3 +179,14 @@ Even a small relief in the amount of layers might be important.
 
 Last the mode might be helpful to people who use accessibility help.
 The mode will reduce the need for "sticky keys".
+
+*** Repository
+
+I'm unsure how I submit this to a repository.
+I think I have done everything related to formatting.
+
+I have no formal background in programming and just picked up lisp, because I wrote a book in Emacs (org-mode/LaTeX/tikz).
+
+My problem is that I have never used git as anything but an advanced backup.
+The way I use it is to browse old stuff with (magit) and copy/paste what I need.
+I think I can handle a pull request as maintainer, but anything more advanced is beyond my current skill set.
