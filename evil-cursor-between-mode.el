@@ -17,16 +17,21 @@
 ;; Keywords: convenience, files
 ;; Package-Requires: ((emacs "24.4") (evil "1.15.0"))
 
-;; TODO: Make keybindings respect user configuration. I want a map where the
-;; user can rebind "A" so it is not affected by toggling the mode.
-;; The challange is that minor-mode maps override maps like `dired-mode-map'.
-;; I want a map like `global-map' that get overridden by major-mode maps.
-;; I don't know how. Maybe it's not even the right solution. I want it to be
-;; able to handle an unknown major mode so I can't micro individual modes.
+;; ============================================================================
+;;; TODO:
+;; ============================================================================
+;; Make keybindings respect user configuration.
+;; I want a map where the user can rebind e.g. "A" so it's bound when the mode
+;; is on, but don't override other maps.
+;; My challange is that minor-mode maps override maps like `dired-mode-map'.
+;; I want a map similar to `global-map' that get overridden by major-mode maps.
+;; I don't know how. Maybe it's not even the right solution.
 ;; I can't make (use-global-map...) work and using that is not recommended.
-;; The global-map is dynamic and hard to keep track of for a toggle.
 ;; Everything I know seems to be the wrong solution.
 ;; For now bindings are hard coded and toggling the mode will rebind them.
+
+;; I'm not 100% on the evil version requirement so I should find a way to
+;; check it.
 
 ;; ============================================================================
 ;;; Commentary:
@@ -37,10 +42,6 @@
 ;; ============================================================================
 ;;; Code:
 ;; ============================================================================
-(unless (package-installed-p 'evil)
-  (package-install 'evil))
-(require 'evil)
-
 (defvar evil-cursor-between-move-cursor-back-init evil-move-cursor-back
   "For toggling the variable with `evil-cursor-between-mode'.")
 (defvar evil-cursor-between-move-beyond-eol-init evil-move-beyond-eol
@@ -58,7 +59,7 @@ The idea is to avoid the <shift> layer when dealing with the current line.
 Layers can then be replaced with a motion with equivalent efficiency.
 \nEmbrace the mindset of Emacs' cursor model and motions among line nuggets.
 Maybe fewer layers are better for your Emacs pinky?"
-  :global t ; Without this the mode will not sync up with it's variable.
+  :global t
   :require 'evil-cursor-between-mode
   :group 'evil
   :lighter nil
@@ -85,11 +86,11 @@ Maybe fewer layers are better for your Emacs pinky?"
     ;; ----------------------------------------------------------------------------
     ;; Swap "a", "o" and "p" with their capital bindings.
     (evil-define-key 'normal global-map
-      "a"  #'evil-append-line   ; swapped because it's only used to edit from eol.
-      "A"  #'evil-append        ; "li" does the same thing.
-      "o"  #'evil-open-above    ; swapped to be consistent with paste.g. "cc".
-      "O"  #'evil-open-below    ; "jo" does the same thing.
-      "p"  #'evil-paste-before  ; swapped because only "p" is used to paste.
+      "a"  #'evil-append-line  ; swapped because it's only used to edit from eol.
+      "A"  #'evil-append       ; "li" does the same thing.
+      "o"  #'evil-open-above   ; swapped to be consistent with paste.
+      "O"  #'evil-open-below   ; "jo" does the same thing.
+      "p"  #'evil-paste-before ; swapped because only "p" is used to paste.
       "P"  #'evil-paste-after) ; "jp" or "lp" does the same thing.
     ;; ----------------------------------------------------------------------------
     ;; Swap "a" and "o" with their `evil-org-mode' capital bindings.
