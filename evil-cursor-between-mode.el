@@ -145,7 +145,6 @@ Movement is restricted to the current line unless `evil-cross-lines' is non-nil.
   (if (< count 0)
       (evil-find-char-backward (- count) char)
     (when (= (char-after) char)
-      (forward-char)
       (cl-decf count))
     (evil-find-char count char)
     (forward-char))
