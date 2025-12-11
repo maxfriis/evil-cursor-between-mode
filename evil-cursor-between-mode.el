@@ -42,6 +42,8 @@
 ;; ============================================================================
 ;;; Code:
 ;; ============================================================================
+(require 'evil)
+
 (defvar evil-cursor-between-move-cursor-back-init evil-move-cursor-back
   "For toggling the variable with `evil-cursor-between-mode'.")
 (defvar evil-cursor-between-move-beyond-eol-init evil-move-beyond-eol
@@ -86,8 +88,7 @@ Maybe fewer layers are better for your Emacs pinky?"
     ;; ----------------------------------------------------------------------------
     ;; Swap "a", "o" and "p" with their capital bindings.
     (evil-define-key 'normal global-map
-      "a"  #'evil-append-line  ; swapped because it's only used to edit from eol.
-      "A"  #'evil-append       ; "li" does the same thing.
+      "a"  #'evil-append-line  ; "li" replace the old "a".
       "o"  #'evil-open-above   ; swapped to be consistent with paste.
       "O"  #'evil-open-below   ; "jo" does the same thing.
       "p"  #'evil-paste-before ; swapped because only "p" is used to paste.
@@ -120,7 +121,6 @@ Maybe fewer layers are better for your Emacs pinky?"
     ;; Swap "a", "o" and "p" back to evil defaults.
     (evil-define-key 'normal global-map
       "a"  #'evil-append
-      "A"  #'evil-append-line
       "o"  #'evil-open-below
       "O"  #'evil-open-above
       "p"  #'evil-paste-after
