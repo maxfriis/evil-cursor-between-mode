@@ -7,31 +7,21 @@
 ;; [[https://creativecommons.org/licenses/by-sa/4.0/]]
 
 ;; A special thanks to Toby Cubitt who coded the cursor model.
-;; Peter Friis Jensen made it a mode and swapped three keybindings.
+;; Peter Friis Jensen made it a mode and swapped some keybindings.
 
 ;; Author: Toby Cubitt
 ;; Maintainer: Peter Friis Jensen <maxfriis@gmail.com>
 ;; URL: https://github.com/maxfriis/evil-cursor-between-mode
 ;; Created: 2025-11-15
-;; Version: 0.1.0
+;; Version: 0.1.1
 ;; Keywords: convenience, files
 ;; Package-Requires: ((emacs "24.4") (evil "1.15.0"))
 
 ;; ============================================================================
 ;;; TODO:
 ;; ============================================================================
-;; Make keybindings respect user configuration.
-;; I want a map where the user can rebind e.g. "A" so it's bound when the mode
-;; is on, but don't override other maps.
-;; My challange is that minor-mode maps override maps like `dired-mode-map'.
-;; I want a map similar to `global-map' that get overridden by major-mode maps.
-;; I don't know how. Maybe it's not even the right solution.
-;; I can't make (use-global-map...) work and using that is not recommended.
-;; Everything I know seems to be the wrong solution.
-;; For now bindings are hard coded and toggling the mode will rebind them.
-
-;; I'm not 100% on the evil version requirement so I should find a way to
-;; check it.
+;; The `evil-org-mode' commands like `evil-org-append-line' does not take
+;; priority when in `org-mode' atm.
 
 ;; ============================================================================
 ;;; Commentary:
@@ -74,67 +64,38 @@ Maybe fewer layers are better for your Emacs pinky?"
     (setq
      evil-move-cursor-back nil
      evil-move-beyond-eol t
-     evil-highlight-closing-paren-at-point-states nil)
-    ;; ----------------------------------------------------------------------------
-    ;; Motion commands "w", "b", "F" and "T" works out of the evil box.
-    (evil-define-key 'motion global-map
-      "t"  #'evil-find-char
-      "f"  #'evil-cursor-between-find-char-after
-      "e"  #'evil-cursor-between-forward-after-word-end
-      "E"  #'evil-cursor-between-forward-after-WORD-end
-      "ge" #'evil-cursor-between-backward-after-word-end
-      "gE" #'evil-cursor-between-backward-after-WORD-end
-      "%"  #'evil-cursor-between-jump-after-item)
-    ;; ----------------------------------------------------------------------------
-    ;; Swap "a", "o" and "p" with their capital bindings.
-    (evil-define-key 'normal global-map
-      "a"  #'evil-append-line  ; "li" replace the old "a".
-      "o"  #'evil-open-above   ; swapped to be consistent with paste.
-      "O"  #'evil-open-below   ; "jo" does the same thing.
-      "p"  #'evil-paste-before ; swapped because only "p" is used to paste.
-      "P"  #'evil-paste-after) ; "jp" or "lp" does the same thing.
-    ;; ----------------------------------------------------------------------------
-    ;; Swap "a" and "o" with their `evil-org-mode' capital bindings.
-    (evil-define-key 'normal 'evil-org-mode
-      "a"  #'evil-org-append-line
-      "A"  nil
-      "o"  #'evil-org-open-above
-      "O"  #'evil-org-open-below))
+     evil-highlight-closing-paren-at-point-states nil))
    (t ; else
     ;; ----------------------------------------------------------------------------
     ;; Back to `evil-mode' defaults when `evil-cursor-between-mode' is disabled.
     (setq
      evil-move-cursor-back evil-cursor-between-move-cursor-back-init
      evil-move-beyond-eol evil-cursor-between-move-beyond-eol-init
-     evil-highlight-closing-paren-at-point-states evil-cursor-between-highlight-closing-paren-at-point-states-init)
-    ;; ----------------------------------------------------------------------------
-    ;; Motion commands back to evil defaults.
-    (evil-define-key 'motion global-map
-      "t"  #'evil-find-char-to
-      "f"  #'evil-find-char
-      "e"  #'evil-forward-word-end
-      "E"  #'evil-forward-WORD-end
-      "ge" #'evil-backward-word-end
-      "gE" #'evil-backward-WORD-end
-      "%"  #'evil-jump-item)
-    ;; ----------------------------------------------------------------------------
-    ;; Swap "a", "o" and "p" back to evil defaults.
-    (evil-define-key 'normal global-map
-      "a"  #'evil-append
-      "o"  #'evil-open-below
-      "O"  #'evil-open-above
-      "p"  #'evil-paste-after
-      "P"  #'evil-paste-before)
-    ;; ----------------------------------------------------------------------------
-    ;; Swap "a" and "o" back to their `evil-org-mode' defaults.
-    (evil-define-key 'normal 'evil-org-mode
-      "a"  nil
-      "A"  #'evil-org-append-line
-      "o"  #'evil-org-open-below
-      "O"  #'evil-org-open-above))))
+     evil-highlight-closing-paren-at-point-states evil-cursor-between-highlight-closing-paren-at-point-states-init))))
 
 ;; ============================================================================
-;;; Evil commands implementing Emacs' cursor model
+;;; Keybindings implementing Emacs' cursor between model
+;; ============================================================================
+;; Motion commands "w/W", "b/B", "F" and "T" works out of the evil box.
+(evil-define-key 'motion 'evil-cursor-between-mode
+  "t"  #'evil-find-char
+   "f"  #'evil-cursor-between-find-char-after
+  "e"  #'evil-cursor-between-forward-after-word-end
+  "E"  #'evil-cursor-between-forward-after-WORD-end
+  "ge" #'evil-cursor-between-backward-after-word-end
+  "gE" #'evil-cursor-between-backward-after-WORD-end
+  "%"  #'evil-cursor-between-jump-after-item)
+;; ----------------------------------------------------------------------------
+;; Swap "a", "o" and "p" with their capital bindings.
+(evil-define-key 'normal 'evil-cursor-between-mode
+  "a"  #'evil-append-line  ; "li" replace the old "a".
+  "o"  #'evil-open-above   ; Swapped to be consistent with paste.
+  "O"  #'evil-open-below   ; "jo" does the same thing.
+  "p"  #'evil-paste-before ; Swapped because almost only "p" is used to paste.
+  "P"  #'evil-paste-after) ; "jp" or "lp" does the same thing.
+
+;; ============================================================================
+;;; Evil commands implementing Emacs' cursor between model
 ;; ============================================================================
 (evil-define-motion evil-cursor-between-find-char-after (count char)
   "Move point immediately after the next COUNT'th occurrence of CHAR.
@@ -144,6 +105,7 @@ Movement is restricted to the current line unless `evil-cross-lines' is non-nil.
   (unless count (setq count 1))
   (if (< count 0)
       (evil-find-char-backward (- count) char)
+    ;; else
     (when (= (char-after) char)
       (cl-decf count))
     (evil-find-char count char)
