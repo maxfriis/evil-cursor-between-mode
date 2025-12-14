@@ -15,13 +15,11 @@
 ;; Created: 2025-11-15
 ;; Version: 0.1.1
 ;; Keywords: convenience, files
-;; Package-Requires: ((emacs "24.4") (evil "1.15.0"))
+;; Package-Requires: ((emacs "29.1") (evil "1.15.0"))
 
 ;; ============================================================================
 ;;; TODO:
 ;; ============================================================================
-;; Find keymaps that are not childen of `text-mode' or `prog-mode' where evil
-;; control "f", "t", "e/E", "ge/gE" and "%" bindings. Rebind.
 
 ;; ============================================================================
 ;;; Commentary:
@@ -65,7 +63,9 @@ Maybe fewer layers are better for your Emacs pinky?"
      evil-move-cursor-back nil
      evil-move-beyond-eol t
      evil-highlight-closing-paren-at-point-states nil)
-    (evil-define-key 'normal 'evil-org-mode
+    ;; ----------------------------------------------------------------------------
+    ;; Rebinding relevamt `evil-org-mode' commands.
+    (evil-define-minor-mode-key 'normal 'evil-org-mode
       "a"  #'evil-org-append-line
       "A"  nil
       "o"  #'evil-org-open-above
@@ -77,48 +77,53 @@ Maybe fewer layers are better for your Emacs pinky?"
      evil-move-cursor-back evil-cursor-between-move-cursor-back-init
      evil-move-beyond-eol evil-cursor-between-move-beyond-eol-init
      evil-highlight-closing-paren-at-point-states evil-cursor-between-highlight-closing-paren-at-point-states-init)
-    (evil-define-key 'normal 'evil-org-mode
+    ;; ----------------------------------------------------------------------------
+    ;; `evil-org-mode' defaults.
+    (evil-define-minor-mode-key 'normal 'evil-org-mode
       "a"  nil
       "A"  #'evil-org-append-line
       "o"  #'evil-org-open-below
       "O"  #'evil-org-open-above))))
 
 ;; ============================================================================
-;;; Keybindings implementing Emacs' cursor between model
+;;; Remappings implementing the cursor model
 ;; ============================================================================
 (defvar evil-cursor-between-mode-map (make-sparse-keymap)
   "Keymap for `evil-cursor-between-mode'.")
-(defun evil-cursor-between-enable-local-map ()
-  "Enable `evil-cursor-between-mode-map' locally."
-  (interactive)
-  (add-to-list 'minor-mode-overriding-map-alist
-               (cons 'evil-cursor-between-mode
-                     evil-cursor-between-mode-map) t))
-(dolist (hook '(text-mode-hook
-                prog-mode-hook))
-  (add-hook hook #'evil-cursor-between-enable-local-map))
-
+(add-to-list 'minor-mode-map-alist
+             (cons 'evil-cursor-between-mode
+                   evil-cursor-between-mode-map) t)
 ;; ----------------------------------------------------------------------------
-;; Motion commands "w/W", "b/B", "F" and "T" works out of the evil box.
-(evil-define-key 'motion evil-cursor-between-mode-map
-  "t"  #'evil-find-char
-  "f"  #'evil-cursor-between-find-char-after
-  "e"  #'evil-cursor-between-forward-after-word-end
-  "E"  #'evil-cursor-between-forward-after-WORD-end
-  "ge" #'evil-cursor-between-backward-after-word-end
-  "gE" #'evil-cursor-between-backward-after-WORD-end
-  "%"  #'evil-cursor-between-jump-after-item)
+;; Motions.
+(keymap-set evil-cursor-between-mode-map
+            "<remap> <evil-find-char-to>" #'evil-find-char)
+(keymap-set evil-cursor-between-mode-map
+            "<remap> <evil-find-char>" #'evil-cursor-between-find-char-after)
+(keymap-set evil-cursor-between-mode-map
+            "<remap> <evil-forward-word-end>" #'evil-cursor-between-forward-after-word-end)
+(keymap-set evil-cursor-between-mode-map
+            "<remap> <evil-forward-WORD-end>" #'evil-cursor-between-forward-after-WORD-end)
+(keymap-set evil-cursor-between-mode-map
+            "<remap> <evil-backward-word-end>" #'evil-cursor-between-backward-after-word-end)
+(keymap-set evil-cursor-between-mode-map
+            "<remap> <evil-backward-WORD-end>" #'evil-cursor-between-backward-after-WORD-end)
+(keymap-set evil-cursor-between-mode-map
+            "<remap> <evil-jump-item>" #'evil-cursor-between-jump-after-item)
 ;; ----------------------------------------------------------------------------
-;; Swap "a", "o" and "p" with their capital bindings.
-(evil-define-key 'normal evil-cursor-between-mode-map
-  "a"  #'evil-append-line  ; "li" replace the old "a".
-  "o"  #'evil-open-above   ; Swapped to be consistent with paste.
-  "O"  #'evil-open-below   ; "jo" does the same thing.
-  "p"  #'evil-paste-before ; Swapped because almost only "p" is used to paste.
-  "P"  #'evil-paste-after) ; "jp" or "lp" does the same thing.
+;; Commands.
+(keymap-set evil-cursor-between-mode-map
+            "<remap> <evil-append>" #'evil-append-line)
+(keymap-set evil-cursor-between-mode-map
+            "<remap> <evil-open-above>" #'evil-open-below)
+(keymap-set evil-cursor-between-mode-map
+            "<remap> <evil-open-below>" #'evil-open-above)
+(keymap-set evil-cursor-between-mode-map
+            "<remap> <evil-paste-before>" #'evil-paste-after)
+(keymap-set evil-cursor-between-mode-map
+            "<remap> <evil-paste-after>" #'evil-paste-before)
 
 ;; ============================================================================
-;;; Evil commands implementing Emacs' cursor between model
+;;; Evil commands implementing Emacs' cursor model
 ;; ============================================================================
 (evil-define-motion evil-cursor-between-find-char-after (count char)
   "Move point immediately after the next COUNT'th occurrence of CHAR.
