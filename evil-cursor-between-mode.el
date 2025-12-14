@@ -20,8 +20,8 @@
 ;; ============================================================================
 ;;; TODO:
 ;; ============================================================================
-;; The `evil-org-mode' commands like `evil-org-append-line' does not take
-;; priority when in `org-mode' atm.
+;; Find keymaps that are not childen of `text-mode' or `prog-mode' where evil
+;; control "f", "t", "e/E", "ge/gE" and "%" bindings. Rebind.
 
 ;; ============================================================================
 ;;; Commentary:
@@ -51,10 +51,10 @@ The idea is to avoid the <shift> layer when dealing with the current line.
 Layers can then be replaced with a motion with equivalent efficiency.
 \nEmbrace the mindset of Emacs' cursor model and motions among line nuggets.
 Maybe fewer layers are better for your Emacs pinky?"
+  :lighter nil
   :global t
   :require 'evil-cursor-between-mode
   :group 'evil
-  :lighter nil
   (cond
    (evil-cursor-between-mode
     (unless evil-mode
@@ -64,22 +64,45 @@ Maybe fewer layers are better for your Emacs pinky?"
     (setq
      evil-move-cursor-back nil
      evil-move-beyond-eol t
-     evil-highlight-closing-paren-at-point-states nil))
+     evil-highlight-closing-paren-at-point-states nil)
+    (evil-define-key 'normal 'evil-org-mode
+      "a"  #'evil-org-append-line
+      "A"  nil
+      "o"  #'evil-org-open-above
+      "O"  #'evil-org-open-below))
    (t ; else
     ;; ----------------------------------------------------------------------------
     ;; Back to `evil-mode' defaults when `evil-cursor-between-mode' is disabled.
     (setq
      evil-move-cursor-back evil-cursor-between-move-cursor-back-init
      evil-move-beyond-eol evil-cursor-between-move-beyond-eol-init
-     evil-highlight-closing-paren-at-point-states evil-cursor-between-highlight-closing-paren-at-point-states-init))))
+     evil-highlight-closing-paren-at-point-states evil-cursor-between-highlight-closing-paren-at-point-states-init)
+    (evil-define-key 'normal 'evil-org-mode
+      "a"  nil
+      "A"  #'evil-org-append-line
+      "o"  #'evil-org-open-below
+      "O"  #'evil-org-open-above))))
 
 ;; ============================================================================
 ;;; Keybindings implementing Emacs' cursor between model
 ;; ============================================================================
+(defvar evil-cursor-between-mode-map (make-sparse-keymap)
+  "Keymap for `evil-cursor-between-mode'.")
+(defun evil-cursor-between-enable-local-map ()
+  "Enable `evil-cursor-between-mode-map' locally."
+  (interactive)
+  (add-to-list 'minor-mode-overriding-map-alist
+               (cons 'evil-cursor-between-mode
+                     evil-cursor-between-mode-map) t))
+(dolist (hook '(text-mode-hook
+                prog-mode-hook))
+  (add-hook hook #'evil-cursor-between-enable-local-map))
+
+;; ----------------------------------------------------------------------------
 ;; Motion commands "w/W", "b/B", "F" and "T" works out of the evil box.
-(evil-define-key 'motion 'evil-cursor-between-mode
+(evil-define-key 'motion evil-cursor-between-mode-map
   "t"  #'evil-find-char
-   "f"  #'evil-cursor-between-find-char-after
+  "f"  #'evil-cursor-between-find-char-after
   "e"  #'evil-cursor-between-forward-after-word-end
   "E"  #'evil-cursor-between-forward-after-WORD-end
   "ge" #'evil-cursor-between-backward-after-word-end
@@ -87,7 +110,7 @@ Maybe fewer layers are better for your Emacs pinky?"
   "%"  #'evil-cursor-between-jump-after-item)
 ;; ----------------------------------------------------------------------------
 ;; Swap "a", "o" and "p" with their capital bindings.
-(evil-define-key 'normal 'evil-cursor-between-mode
+(evil-define-key 'normal evil-cursor-between-mode-map
   "a"  #'evil-append-line  ; "li" replace the old "a".
   "o"  #'evil-open-above   ; Swapped to be consistent with paste.
   "O"  #'evil-open-below   ; "jo" does the same thing.
